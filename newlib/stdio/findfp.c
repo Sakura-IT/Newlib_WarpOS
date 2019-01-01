@@ -108,7 +108,10 @@ std (FILE *ptr,
   ptr->_handle = handle;
   ptr->_amode = 0;
   ptr->_open_flags = 0;
-  ptr->_fcntl = 0;
+  if (file == 0)
+    ptr->_fcntl = O_RDONLY;
+  else
+    ptr->_fcntl = O_WRONLY;
   ptr->_nestcnt = 0;
   if (IsInteractive(handle))
     ptr->_fdflags = FDFL_STDIO | FDFL_INTERACTIVE;

@@ -25,13 +25,15 @@ void *memamiga(size_t align, size_t nbytes)
     align = 32;
   if ((align & -align) != align)
     return NULL;
-  size = nbytes + align + 4;
+  size = nbytes + align + 8;
   a = AllocPooledPPC(__mempool, size);
-  ptr = (void*)((ULONG)a + align+3 & -align);
+  ptr = (void*)((ULONG)a + align+7 & -align);
   char *b = ptr;
   int *memloc = (int*)(&b[-4]);
+  int *memsize = (int*)(&b[-8]);
   *memloc = (ULONG)a;
-  return ptr;
+  *memsize = (ULONG)size;			//Original WOS saves size. MOS emulation of
+  return ptr;					//WOS apparently does not...
 }
 
 
@@ -41,9 +43,12 @@ void free(void *ptr)
   {
     void* a;
     char *b = ptr;
+    ULONG c;
     int *memloc = (int*)(&b[-4]);
+    int *memsize = (int*)(&b[-8]);
     a = (void*)*memloc;
-    FreePooledPPC(__mempool, a, 0);
+    c = (ULONG)*memsize;
+    FreePooledPPC(__mempool, a, c);
   }
 }
 

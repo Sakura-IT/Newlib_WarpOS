@@ -160,6 +160,9 @@ _fopen_r (struct _reent *ptr,
 #endif
 
   _newlib_flockfile_end (fp);
+
+  if ((fp->_flags & __SRW) || (fp->_flags & __SRD))
+    setvbuf(fp, NULL, _IOFBF, 16384);	//set default buffering to 16k.
   return fp;
 }
 
