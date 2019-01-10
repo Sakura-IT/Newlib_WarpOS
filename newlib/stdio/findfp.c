@@ -33,6 +33,9 @@
 #include <proto/exec.h>
 #pragma pack()
 extern int * __fp;
+extern int __stdin;
+extern int __stdout;
+extern int __stderr;
 #endif
 
 #ifdef _REENT_SMALL
@@ -125,7 +128,7 @@ static inline void
 stdin_init(FILE *ptr)
 {
 #ifdef WARPUP
-  std (ptr,  __SRD, 0, Input());
+  std (ptr,  __SRD, 0, __stdin);
 #else
   std (ptr,  __SRD, 0);
 #endif
@@ -143,13 +146,13 @@ stdout_init(FILE *ptr)
 #ifdef HAVE_FCNTL
   std (ptr, __SWR, 1
 #ifdef WARPUP  
-  , Output()
+  , __stdout
 #endif
   );
 #else
   std (ptr, __SWR | __SLBF, 1
 #ifdef WARPUP
-  , Output()
+  , __stdout
 #endif
   );
 #endif
@@ -161,7 +164,7 @@ stderr_init(FILE *ptr)
   /* POSIX requires stderr to be opened for reading and writing, even
      when the underlying fd 2 is write-only.  */
 #ifdef WARPUP
-  std (ptr, __SRW | __SNBF, 2, Output());
+  std (ptr, __SRW | __SNBF, 2, __stderr);
 #else
   std (ptr, __SRW | __SNBF, 2);
 #endif

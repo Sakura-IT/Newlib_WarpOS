@@ -32,6 +32,10 @@ static int __pathconv;
 int __maxfd;
 int * __fp;
 
+int __stdin;
+int __stdout;
+int __stderr;
+
 /* Convert Un*x style pathnames to Amiga OS ones */
 
 char *__amigapath(const char *path)
@@ -146,6 +150,9 @@ void __init_fd()
     errno = ENOMEM;
     exit(ENOMEM);
     }
+  __stdin = Input();
+  __stdout = Output();
+  __stderr = __stdout;
 }
 
 
