@@ -19,6 +19,7 @@
 
 extern int __maxfd;
 extern int * __fp;
+extern void __seterrno(void);
 
 int _read (int fd, char *ptr, int len)
 {
@@ -52,6 +53,9 @@ int _read (int fd, char *ptr, int len)
     errno = EBADF;
     return EOF;
     }
-  if ((r=Read(fp->_handle, ptr, len))!=EOF)
+
+  r=Read(fp->_handle, ptr, len);
+    if (r == EOF)
+     __seterrno();
     return r;
 }  

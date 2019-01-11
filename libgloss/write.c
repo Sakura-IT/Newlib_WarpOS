@@ -19,6 +19,9 @@
 
 extern int __maxfd;
 extern int * __fp;
+extern void __seterrno(void);
+
+static struct SignalSemaphorePPC test_sem;
 
 int _write (int fd, char *ptr, int len)
 {
@@ -52,7 +55,11 @@ int _write (int fd, char *ptr, int len)
       {
       errno = EBADF;
       return EOF;
-      }  
-    if ((r=Write(fp->_handle, ptr, len))!=EOF)
-      return r;
+      }
+
+    r=Write(fp->_handle, ptr, len);
+    if (r == EOF)
+      __seterrno();
+    return r;
 }
+
