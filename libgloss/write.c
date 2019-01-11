@@ -21,8 +21,6 @@ extern int __maxfd;
 extern int * __fp;
 extern void __seterrno(void);
 
-static struct SignalSemaphorePPC test_sem;
-
 int _write (int fd, char *ptr, int len)
 {
 
