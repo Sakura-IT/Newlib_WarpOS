@@ -27,6 +27,8 @@ void *memamiga(size_t align, size_t nbytes)
     return NULL;
   size = nbytes + align + 8;
   a = AllocPooledPPC(__mempool, size);
+  if (!a)
+    return a;
   ptr = (void*)((ULONG)a + align+7 & -align);
   char *b = ptr;
   int *memloc = (int*)(&b[-4]);
@@ -64,5 +66,5 @@ void __exitmalloc(void)
 	DeletePoolPPC(__mempool);
 }
 
-  __asm__ (".section .init \n .long __initmalloc, -55 \n .section .text\n");
-  __asm__ (".section .fini \n .long __exitmalloc, -55 \n .section .text\n");
+  __asm__ (".section .init \n .long __initmalloc, 110 \n .section .text\n");
+  __asm__ (".section .fini \n .long __exitmalloc, 110 \n .section .text\n");
