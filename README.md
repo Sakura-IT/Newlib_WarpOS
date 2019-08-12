@@ -1,7 +1,7 @@
-NewLib 3.0.0 for WarpOS
+NewLib 3.1.0 for WarpOS
 =======================
 
-This is an implementation of NewLib 3.0.0 for WarpOS.
+This is an implementation of NewLib 3.1.0 for WarpOS.
 
 In libglosswos you can find the glue and extra functions.
 

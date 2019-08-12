@@ -144,7 +144,7 @@ struct __sbuf {
  * _ub._base!=NULL) and _up and _ur save the current values of _p and _r.
  */
 
-#ifdef _REENT_SMALL
+#if defined(_REENT_SMALL) && !defined(_REENT_GLOBAL_STDIO_STREAMS)
 /*
  * struct __sFILE_fake is the start of a struct __sFILE, with only the
  * minimal fields allocated.  In __sinit() we really allocate the 3
@@ -155,7 +155,7 @@ struct __sFILE_fake {
   int	_r;		/* read space left for getc() */
   int	_w;		/* write space left for putc() */
   short	_flags;		/* flags, below; this FILE is free if 0 */
-  int	_file;		/* fileno, if Unix descriptor, else -1 */
+  short	_file;		/* fileno, if Unix descriptor, else -1 */
   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
 
@@ -174,9 +174,9 @@ extern void   __sinit (struct _reent *);
 	__sinit (ptr);				\
     }						\
   while (0)
-#else
+#else /* _REENT_SMALL && !_REENT_GLOBAL_STDIO_STREAMS */
 # define _REENT_SMALL_CHECK_INIT(ptr) /* nothing */
-#endif
+#endif /* _REENT_SMALL && !_REENT_GLOBAL_STDIO_STREAMS */
 
 struct __sFILE {
   unsigned char *_p;	/* current position in (some) buffer */
@@ -235,6 +235,7 @@ struct __sFILE {
   int 	_fcntl;		/* File Control Flags */
   int	_nestcnt;	/* For e.g. Dup */
 #endif
+
 };
 
 #ifdef __CUSTOM_FILE_IO__
@@ -249,7 +250,7 @@ struct __sFILE64 {
   int	_r;		/* read space left for getc() */
   int	_w;		/* write space left for putc() */
   short	_flags;		/* flags, below; this FILE is free if 0 */
-  int	_file;		/* fileno, if Unix descriptor, else -1 */
+  short	_file;		/* fileno, if Unix descriptor, else -1 */
   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
 
@@ -426,6 +427,43 @@ struct _reent
   char *_signal_buf;                    /* strsignal */
 };
 
+#ifdef _REENT_GLOBAL_STDIO_STREAMS
+extern __FILE __sf[3];
+
+# define _REENT_INIT(var) \
+  { 0, \
+    &__sf[0], \
+    &__sf[1], \
+    &__sf[2], \
+    0,   \
+    _NULL, \
+    0, \
+    0, \
+    _NULL, \
+    _NULL, \
+    _NULL, \
+    0, \
+    0, \
+    _NULL, \
+    _NULL, \
+    _NULL, \
+    _NULL, \
+    _NULL, \
+    _REENT_INIT_ATEXIT \
+    {_NULL, 0, _NULL}, \
+    _NULL, \
+    _NULL, \
+    _NULL \
+  }
+
+#define _REENT_INIT_PTR_ZEROED(var) \
+  { (var)->_stdin = &__sf[0]; \
+    (var)->_stdout = &__sf[1]; \
+    (var)->_stderr = &__sf[2]; \
+  }
+
+#else /* _REENT_GLOBAL_STDIO_STREAMS */
+
 extern const struct __sFILE_fake __sf_fake_stdin;
 extern const struct __sFILE_fake __sf_fake_stdout;
 extern const struct __sFILE_fake __sf_fake_stderr;
@@ -461,6 +499,8 @@ extern const struct __sFILE_fake __sf_fake_stderr;
     (var)->_stdout = (__FILE *)&__sf_fake_stdout; \
     (var)->_stderr = (__FILE *)&__sf_fake_stderr; \
   }
+
+#endif /* _REENT_GLOBAL_STDIO_STREAMS */
 
 /* Only add assert() calls if we are specified to debug.  */
 #ifdef _REENT_CHECK_DEBUG

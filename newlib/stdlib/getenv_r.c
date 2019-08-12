@@ -57,11 +57,13 @@ permit '=' to be in identifiers.
 #include <string.h>
 #include "envlock.h"
 
+#ifdef WARPUP
 #pragma pack(2)
 #include <dos/dos.h>
 #include <dos/var.h>
 #include <proto/dos.h>
 #pragma pack()
+#endif
 
 extern char **environ;
 
@@ -119,22 +121,28 @@ _findenv_r (struct _reent *reent_ptr,
   return NULL;
 
 #else
+  const char *varbuf = NULL;
+  size_t size = 64;
+  size_t len;
 
-  static char *var=NULL;
-  size_t len,i=0;
-  do
-  { i+=256;
-    if(var!=NULL) /* free old buffer */
-      free(var);
-    var=malloc(i); /* and get a new one */
-    if(var==NULL) /* Oh, dear */
+  do {
+    if (varbuf)
+      free(varbuf);
+    size <<= 1;
+    if (varbuf = malloc(size))
+      len = GetVar((STRPTR)name,varbuf,size,GVF_BINARY_VAR) + 1;
+    else
       return NULL;
-    len=GetVar((char *)name,var,i,GVF_BINARY_VAR)+1;
-  }while(len>=i); /* just to be sure we got everything, we _require_ 1 unused byte */
-  if(len==0) /* Variable doesn't exist */
+  }
+  while (len >= size);  /* make sure we got the whole variable */
+
+  if (len == 0) {
+    /* doesn't exist */
+    free(varbuf);
     return NULL;
-  else
-    return var;
+  }
+
+  return (char *)varbuf;
 
 #endif
 }

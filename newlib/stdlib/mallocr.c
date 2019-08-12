@@ -966,13 +966,11 @@ extern Void_t*     sbrk();
 #endif
 
 #ifndef MORECORE_FAILURE
-//#define MORECORE_FAILURE -1
-#define MORECORE_FAILURE 0
+#define MORECORE_FAILURE -1
 #endif
 
 #ifndef MORECORE_CLEARS
-//#define MORECORE_CLEARS 1
-#define MORECORE_CLEARS 0
+#define MORECORE_CLEARS 1
 #endif
 
 #endif /* INTERNAL_LINUX_C_LIB */
@@ -2200,13 +2198,18 @@ static void malloc_extend_top(RARG nb) RDECL INTERNAL_SIZE_T nb;
     /* Guarantee the next brk will be at a page boundary */
     correction += pagesz - ((POINTER_UINT)(brk + sbrk_size) & (pagesz - 1));
 
+    /* To guarantee page boundary, correction should be less than pagesz */
+    correction &= (pagesz - 1);
+
     /* Allocate correction */
     new_brk = (char*)(MORECORE (correction));
     if (new_brk == (char*)(MORECORE_FAILURE))
       {
 	correction = 0;
 	correction_failed = 1;
-	new_brk = brk;
+	new_brk = brk + sbrk_size;
+	if (front_misalign > 0)
+	  new_brk -= (MALLOC_ALIGNMENT) - front_misalign;
       }
 
     sbrked_mem += correction;
