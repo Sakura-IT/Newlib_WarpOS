@@ -5,17 +5,19 @@
  *
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
 #include "bsdsocket.h"
-#pragma pack(2)
+
+#pragma pack(push,2)
 #include <exec/libraries.h>
 #include <libraries/bsdsocket.h>
 #include <workbench/startup.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
-#pragma pack()
+#pragma pack(pop)
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

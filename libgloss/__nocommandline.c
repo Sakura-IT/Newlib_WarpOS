@@ -1,13 +1,12 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
-
 
 #include <stdlib.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <exec/memory.h>
 #include <dos/dos.h>
 #include <proto/exec.h>
@@ -15,7 +14,7 @@
 #include <powerpc/powerpc_protos.h>
 #include <workbench/startup.h>
 extern struct WBStartup *_WBenchMsg;
-#pragma pack()
+#pragma pack(pop)
 
 extern char __stdiowin[];
 

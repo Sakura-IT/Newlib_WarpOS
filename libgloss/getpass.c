@@ -5,15 +5,15 @@
  *
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <exec/types.h>
 #include <dos/dos.h>
 #include <proto/dos.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include <string.h>
 #include <errno.h>

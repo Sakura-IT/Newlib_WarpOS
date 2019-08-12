@@ -1,9 +1,8 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
-
 
 #include "config.h"
 #include <_ansi.h>
@@ -12,10 +11,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/dos.h>
 #include <dos/dos.h>
-#pragma pack()
+#pragma pack(pop)
 
 extern void __seterrno(void);
 extern int * __fp;

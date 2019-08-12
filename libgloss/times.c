@@ -1,16 +1,15 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
-
-#pragma pack(2)
+#pragma pack(push,2)
 #include <exec/memory.h>
 #include <devices/timer.h>
 #include <proto/exec.h>
 #include <powerpc/powerpc_protos.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include "config.h"
 #include <_ansi.h>

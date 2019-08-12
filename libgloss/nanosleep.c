@@ -3,15 +3,14 @@
  * (C)2006 Diego Casorran <diegocr()users.sf.net>
  * Brought to you under the BSD Licence.
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
-
-#pragma pack(2)
+#pragma pack(push,2)
 #include <devices/timer.h>
 #include <proto/dos.h>
 #include <powerpc/powerpc_protos.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include <sys/time.h>
 #include <stdlib.h>

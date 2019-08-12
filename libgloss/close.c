@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
 #include "config.h"
@@ -10,9 +10,10 @@
 #include <errno.h>
 #include <stdio.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/dos.h>
-#pragma pack()
+#pragma pack(pop)
+
 #include "bsdsocket.h"
 
 extern void __seterrno(void);

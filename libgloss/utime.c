@@ -1,20 +1,19 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/dos.h>
 #include <devices/timer.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include <sys/time.h>
 #include <utime.h>
 #include <time.h>
 #include <utime.h>
 #include <errno.h>
-
 
 #define SECSPERDAY (24L * 60L * 60L)
 

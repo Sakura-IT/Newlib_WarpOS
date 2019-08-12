@@ -1,3 +1,9 @@
+/*
+ * $Id$
+ *
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
+ */
+
 #include "config.h"
 #include "bsdsocket.h"
 #include <_ansi.h>
@@ -6,10 +12,9 @@
 #include <errno.h>
 #include <stdio.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/dos.h>
-#pragma pack()
-
+#pragma pack(pop)
 
 extern int __maxfd;
 extern int * __fp;

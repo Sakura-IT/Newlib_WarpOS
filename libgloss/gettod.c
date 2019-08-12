@@ -4,11 +4,11 @@
  * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <dos/dos.h>
 #include <proto/dos.h>
 #include <devices/timer.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include "config.h"
 #include <_ansi.h>

@@ -1,17 +1,16 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
-
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <malloc.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <powerpc/powerpc_protos.h>
-#pragma pack()
+#pragma pack(pop)
 
 void *realloc(void *ptr, size_t size)
 {

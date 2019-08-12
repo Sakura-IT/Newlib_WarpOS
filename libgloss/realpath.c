@@ -1,9 +1,7 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
- *
- * :ts=4
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  *
  * Portable ISO 'C' (1994) runtime library for the Amiga computer
  * Copyright (c) 2002-2015 by Olaf Barthel <obarthel (at) gmx.net>
@@ -40,10 +38,10 @@
 #include <errno.h>
 #include <sys/types.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/dos.h>
 #include <dos/dos.h>
-#pragma pack()
+#pragma pack(pop)
 
 extern char *__amigapath(const char *path);
 extern void __seterrno(void);

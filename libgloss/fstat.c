@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  */
 
 
@@ -14,11 +14,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <dos/dosextens.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
-#pragma pack()
+#pragma pack(pop)
 
 extern int __maxfd;
 extern int * __fp;

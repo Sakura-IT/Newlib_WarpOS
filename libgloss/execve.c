@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  *
  * :ts=4
  *
@@ -41,13 +41,13 @@
 #include <string.h>
 #include <ctype.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <dos/dos.h>
 #include <dos/dosextens.h>
 #include <dos/stdio.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
-#pragma pack()
+#pragma pack(pop)
 
 extern void __seterrno(void);
 extern char *__amigapath(const char *path);
@@ -566,7 +566,7 @@ count_extra_escape_chars(const char * string,size_t len)
 
 /* Scan a string for characters which may require that the string
    should be quoted */
-STATIC BOOL
+static BOOL
 string_needs_quoting(const char * string,size_t len)
 {
 	BOOL result = FALSE;

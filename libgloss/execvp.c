@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Adapted for NewLib3 by Dennis van der Boon in 2018
+ * Adapted for NewLib3 by Dennis van der Boon in 2019
  *
  * :ts=4
  *
@@ -44,9 +44,9 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <exec/types.h>
-#pragma pack()
+#pragma pack(pop)
 
 extern void __seterrno(void);
 
