@@ -14,9 +14,9 @@
 
 #define KERNEL
 
-#pragma pack(2)
+#pragma pack(push,2)
 #include <proto/socket.h>
-#pragma pack()
+#pragma pack(pop)
 
 #include "fdflags.h"
 #include <sys/types.h>

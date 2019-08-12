@@ -44,4 +44,4 @@ void setprogname(const char *name)
     strcpy(__progname,name);
 }
 
-  __asm__ (".section .init \n .long _INIT_3_progname, --27 \n .section .text\n");
+  __asm__ (".section .init \n .long _INIT_3_progname, 170 \n .section .text\n");

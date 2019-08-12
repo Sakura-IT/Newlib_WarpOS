@@ -75,4 +75,4 @@ int __init_bsdsocket(int s)
 
   return 0;
 }
-  __asm__ (".section .fini \n .long _EXIT_4_bsdsocket, -45 \n .section .text\n");
+  __asm__ (".section .fini \n .long _EXIT_4_bsdsocket, 120 \n .section .text\n");

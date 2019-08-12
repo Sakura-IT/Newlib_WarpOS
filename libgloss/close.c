@@ -52,6 +52,8 @@ int _close(int file)
         return 0;
       }
     }
+  if (file >= 0 && file <= 2)
+    return 0;
   errno = ENOENT;
   return -1;
 }

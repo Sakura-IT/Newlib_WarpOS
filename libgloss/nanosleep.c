@@ -7,14 +7,13 @@
  */
 
 
-#include <sys/time.h>
-
 #pragma pack(2)
 #include <devices/timer.h>
 #include <proto/dos.h>
 #include <powerpc/powerpc_protos.h>
 #pragma pack()
 
+#include <sys/time.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <signal.h>

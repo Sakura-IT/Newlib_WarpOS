@@ -139,5 +139,5 @@ struct dirent *readdir(DIR *d)
   return NULL;
 }
 
-  __asm__ (".section .init \n .long _INIT_5_dirlist, -25 \n .section .text\n");
-  __asm__ (".section .fini \n .long _EXIT_5_dirlist, -25 \n .section .text\n");
+  __asm__ (".section .init \n .long _INIT_5_dirlist, 180 \n .section .text\n");
+  __asm__ (".section .fini \n .long _EXIT_5_dirlist, 180 \n .section .text\n");

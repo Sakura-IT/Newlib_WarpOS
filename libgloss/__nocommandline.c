@@ -161,5 +161,5 @@ void __exitcommandline(void)
     }
 }
 
-  __asm__ (".section .init \n .long __initcommandline, -35 \n .section .text\n");
-  __asm__ (".section .fini \n .long __exitcommandline, -35 \n .section .text\n");
+  __asm__ (".section .init \n .long __initcommandline, 150 \n .section .text\n");
+  __asm__ (".section .fini \n .long __exitcommandline, 150 \n .section .text\n");

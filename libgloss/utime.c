@@ -4,6 +4,10 @@
  * Adapted for NewLib3 by Dennis van der Boon in 2018
  */
 
+#pragma pack(2)
+#include <proto/dos.h>
+#include <devices/timer.h>
+#pragma pack()
 
 #include <sys/time.h>
 #include <utime.h>
@@ -11,12 +15,6 @@
 #include <utime.h>
 #include <errno.h>
 
-#pragma pack(2)
-#include <proto/dos.h>
-#include <devices/timer.h>
-#pragma pack()
-
-#include <sys/time.h>
 
 #define SECSPERDAY (24L * 60L * 60L)
 

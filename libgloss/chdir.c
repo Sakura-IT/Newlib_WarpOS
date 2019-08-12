@@ -61,5 +61,5 @@ void __exitchdir(void)
   if (havelock) UnLock(CurrentDir(oldlock));
 }
 
-__asm__ (".section .init \n .long __initchdir, -20 \n .section .text\n");
-__asm__ (".section .fini \n .long __exitchdir, -20 \n .section .text\n");
+__asm__ (".section .init \n .long __initchdir, 190 \n .section .text\n");
+__asm__ (".section .fini \n .long __exitchdir, 190 \n .section .text\n");

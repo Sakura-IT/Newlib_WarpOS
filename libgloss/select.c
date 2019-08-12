@@ -8,6 +8,11 @@
  * Adapted for NewLib3 by Dennis van der Boon in 2018
  */
 
+#pragma pack(2)
+#include <dos/dos.h>
+#include <proto/dos.h>
+#include <devices/timer.h>
+#pragma pack()
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -17,16 +22,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include "fdflags.h"
-
-#pragma pack(2)
-#define DEVICES_TIMER_H  /* do not redefine timeval */
-struct TimeVal {  /* needed for OS4 */
-    unsigned long Seconds;
-    unsigned long Microseconds;
-};
-#include <dos/dos.h>
-#include <proto/dos.h>
-#pragma pack()
 
 /* from bsdsocket.c, we don't want to include bsdsocket.h */
 extern int __socket_select(int,fd_set *,fd_set *,fd_set *,

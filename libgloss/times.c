@@ -125,4 +125,4 @@ clock_t times(struct tms *tp)
   return tim * CLK_TCK;
 }
 
-__asm__ (".section .init \n .long __inittimer, -15 \n .section .text\n");
+__asm__ (".section .init \n .long __inittimer, 200 \n .section .text\n");

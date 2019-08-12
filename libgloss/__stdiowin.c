@@ -203,7 +203,7 @@ char __stdiowin[]="NIL:";
 
 /* Add these three functions to the lists */
 
-  __asm__ (".section .init \n .long __initamigapath, -30 \n .section .text\n");
-  __asm__ (".section .fini \n .long doexit, -5 \n .section .text\n");
-  __asm__ (".section .init \n .long __init_fd, -40 \n .section .text\n");
-  __asm__ (".section .fini \n .long __exit_fd, -40 \n .section .text\n");
+  __asm__ (".section .init \n .long __initamigapath, 160 \n .section .text\n");
+  __asm__ (".section .fini \n .long doexit, 210 \n .section .text\n");
+  __asm__ (".section .init \n .long __init_fd, 130 \n .section .text\n");
+  __asm__ (".section .fini \n .long __exit_fd, 130 \n .section .text\n");
