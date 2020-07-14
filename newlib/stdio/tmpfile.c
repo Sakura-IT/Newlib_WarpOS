@@ -69,7 +69,8 @@ _tmpfile_r (struct _reent *ptr)
 #ifdef WARPUP
       fd = _open_fpr (ptr, f, O_RDWR | O_CREAT | O_EXCL | O_BINARY, S_IRUSR | S_IWUSR, NULL);
 #else
-      fd = _open_r (ptr, f, O_RDWR | O_CREAT | O_EXCL | O_BINARY, S_IRUSR | S_IWUSR);
+      fd = _open_r (ptr, f, O_RDWR | O_CREAT | O_EXCL | O_BINARY,
+		    S_IRUSR | S_IWUSR);
 #endif
     }
   while (fd < 0 && ptr->_errno == EEXIST);

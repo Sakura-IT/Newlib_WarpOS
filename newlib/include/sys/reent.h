@@ -30,6 +30,11 @@ typedef unsigned __Long __ULong;
 #include <sys/types.h>
 #endif
 
+#ifndef __machine_flock_t_defined
+#include <sys/lock.h>
+typedef _LOCK_RECURSIVE_T _flock_t;
+#endif
+
 #ifndef __Long
 #define __Long __int32_t
 typedef __uint32_t __ULong;
@@ -183,7 +188,11 @@ struct __sFILE {
   int	_r;		/* read space left for getc() */
   int	_w;		/* write space left for putc() */
   short	_flags;		/* flags, below; this FILE is free if 0 */
+#ifdef WARPUP
   int	_file;		/* fileno, if Unix descriptor, else -1 */
+#else
+  short	_file;		/* fileno, if Unix descriptor, else -1 */
+#endif
   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
 
@@ -235,7 +244,6 @@ struct __sFILE {
   int 	_fcntl;		/* File Control Flags */
   int	_nestcnt;	/* For e.g. Dup */
 #endif
-
 };
 
 #ifdef __CUSTOM_FILE_IO__
@@ -502,10 +510,10 @@ extern const struct __sFILE_fake __sf_fake_stderr;
 
 #endif /* _REENT_GLOBAL_STDIO_STREAMS */
 
-/* Only add assert() calls if we are specified to debug.  */
-#ifdef _REENT_CHECK_DEBUG
+/* Specify how to handle reent_check malloc failures. */
+#ifdef _REENT_CHECK_VERIFY
 #include <assert.h>
-#define __reent_assert(x) assert(x)
+#define __reent_assert(x) ((x) ? (void)0 : __assert_func(__FILE__, __LINE__, (char *)0, "REENT malloc succeeded"))
 #else
 #define __reent_assert(x) ((void)0)
 #endif

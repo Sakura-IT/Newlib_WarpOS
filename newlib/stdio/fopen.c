@@ -129,8 +129,11 @@ _fopen_r (struct _reent *ptr,
     return NULL;
   if ((fp = __sfp (ptr)) == NULL)
     return NULL;
-
+#ifdef WARPUP
   if ((f = _open_fpr (ptr, file, oflags, 0666, fp)) < 0)
+#else
+  if ((f = _open_r (ptr, file, oflags, 0666)) < 0)
+#endif
     {
       _newlib_sfp_lock_start (); 
       fp->_flags = 0;		/* release */
@@ -161,8 +164,10 @@ _fopen_r (struct _reent *ptr,
 
   _newlib_flockfile_end (fp);
 
+#ifdef WARPUP  
   if ((fp->_flags & __SRW) || (fp->_flags & __SRD))
     setvbuf(fp, NULL, _IOFBF, 16384);	//set default buffering to 16k.
+#endif    
   return fp;
 }
 

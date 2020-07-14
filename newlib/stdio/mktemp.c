@@ -230,7 +230,8 @@ _gettemp (struct _reent *ptr,
 #ifdef WARPUP
 	  if ((*doopen = _open_fpr (ptr, path, O_CREAT | O_EXCL | O_RDWR | flags, 0600, NULL)) >= 0)
 #else
-	  if ((*doopen = _open_r (ptr, path, O_CREAT | O_EXCL | O_RDWR | flags, 0600)) >= 0)
+	  if ((*doopen = _open_r (ptr, path, O_CREAT | O_EXCL | O_RDWR | flags,
+				  0600)) >= 0)
 #endif
 	    return 1;
 	  if (ptr->_errno != EEXIST)

@@ -144,7 +144,7 @@ _freopen_r (struct _reent *ptr,
       f = _open_fpr (ptr, (char *) file, oflags, 0666, fp);
 #else
       f = _open_r (ptr, (char *) file, oflags, 0666);
-#endif      
+#endif
       e = ptr->_errno;
     }
   else

@@ -86,8 +86,8 @@ _fdopen_r (struct _reent *ptr,
   if (!(__fp[fd]))
     {
 #endif
-    if ((fp = __sfp (ptr)) == 0)
-      return 0;
+  if ((fp = __sfp (ptr)) == 0)
+    return 0;
 #ifdef WARPUP
     }
   else

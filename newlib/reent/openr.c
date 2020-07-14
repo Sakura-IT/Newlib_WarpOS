@@ -68,4 +68,5 @@ int _open_fpr (struct _reent *ptr, const char *file, int flags, int mode, int fp
 
 #endif /* WARPUP */
 
+
 #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */

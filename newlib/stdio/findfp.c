@@ -25,20 +25,20 @@
 #include <fcntl.h>
 #include <sys/lock.h>
 #include "local.h"
-#include "fdflags.h"
 
 #ifdef WARPUP
-#pragma pack(2)
+#include "fdflags.h"
+#pragma pack(push,2)
 #include <proto/dos.h>
 #include <proto/exec.h>
-#pragma pack()
+#pragma pack(pop)
 extern int * __fp;
 extern int __stdin;
 extern int __stdout;
 extern int __stderr;
 #endif
 
-#ifdef _REENT_SMALL
+#if defined(_REENT_SMALL) && !defined(_REENT_GLOBAL_STDIO_STREAMS)
 const struct __sFILE_fake __sf_fake_stdin =
     {_NULL, 0, 0, 0, 0, {_NULL, 0}, 0, _NULL};
 const struct __sFILE_fake __sf_fake_stdout =
@@ -56,7 +56,6 @@ _NOINLINE_STATIC void
 #else
 static void
 #endif
-
 #ifdef WARPUP
 std (FILE *ptr,
             int flags,
@@ -67,7 +66,6 @@ std (FILE *ptr,
             int flags,
             int file)
 #endif
-
 {
   ptr->_p = 0;
   ptr->_r = 0;
@@ -94,7 +92,7 @@ std (FILE *ptr,
 #else /* _STDIO_CLOSE_STD_STREAMS */
   ptr->_close = NULL;
 #endif /* _STDIO_CLOSE_STD_STREAMS */
-#if !defined(__SINGLE_THREAD__) && !defined(_REENT_SMALL)
+#if !defined(__SINGLE_THREAD__) && !(defined(_REENT_SMALL) && !defined(_REENT_GLOBAL_STDIO_STREAMS))
   __lock_init_recursive (ptr->_lock);
   /*
    * #else
@@ -122,6 +120,7 @@ std (FILE *ptr,
     ptr->_fdflags = FDFL_STDIO;
   __fp[file] = (int) ptr;
 #endif
+
 }
 
 static inline void
@@ -163,11 +162,11 @@ stderr_init(FILE *ptr)
 {
   /* POSIX requires stderr to be opened for reading and writing, even
      when the underlying fd 2 is write-only.  */
+  std (ptr, __SRW | __SNBF, 2
 #ifdef WARPUP
-  std (ptr, __SRW | __SNBF, 2, __stderr);
-#else
-  std (ptr, __SRW | __SNBF, 2);
-#endif
+  , __stderr
+#endif  
+  );
 }
 
 struct glue_with_file {
@@ -320,7 +319,7 @@ __sinit (struct _reent *s)
 # ifndef _REENT_GLOBAL_STDIO_STREAMS
   s->__sglue._niobs = 3;
   s->__sglue._iobs = &s->__sf[0];
-# endif
+# endif /* _REENT_GLOBAL_STDIO_STREAMS */
 #else
   s->__sglue._niobs = 0;
   s->__sglue._iobs = NULL;
@@ -329,9 +328,15 @@ __sinit (struct _reent *s)
      __sinit if it's 0. */
   if (s == _GLOBAL_REENT)
     s->__sdidinit = 1;
+# ifndef _REENT_GLOBAL_STDIO_STREAMS
   s->_stdin = __sfp(s);
   s->_stdout = __sfp(s);
   s->_stderr = __sfp(s);
+# else /* _REENT_GLOBAL_STDIO_STREAMS */
+  s->_stdin = &__sf[0];
+  s->_stdout = &__sf[1];
+  s->_stderr = &__sf[2];
+# endif /* _REENT_GLOBAL_STDIO_STREAMS */
 #endif
 
 #ifdef _REENT_GLOBAL_STDIO_STREAMS
@@ -342,11 +347,11 @@ __sinit (struct _reent *s)
     stdout_init (&__sf[1]);
     stderr_init (&__sf[2]);
   }
-#else
+#else /* _REENT_GLOBAL_STDIO_STREAMS */
   stdin_init (s->_stdin);
   stdout_init (s->_stdout);
   stderr_init (s->_stderr);
-#endif
+#endif /* _REENT_GLOBAL_STDIO_STREAMS */
 
   s->__sdidinit = 1;
 
