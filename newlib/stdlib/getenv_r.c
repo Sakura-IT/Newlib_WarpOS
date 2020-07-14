@@ -58,11 +58,11 @@ permit '=' to be in identifiers.
 #include "envlock.h"
 
 #ifdef WARPUP
-#pragma pack(2)
+#pragma pack(push,2)
 #include <dos/dos.h>
 #include <dos/var.h>
 #include <proto/dos.h>
-#pragma pack()
+#pragma pack(pop)
 #endif
 
 extern char **environ;
@@ -86,7 +86,7 @@ _findenv_r (struct _reent *reent_ptr,
 	register const char *name,
 	int *offset)
 {
-#ifndef WARPUP
+#ifndef WARPUP  
   register int len;
   register char **p;
   const char *c;
@@ -119,7 +119,7 @@ _findenv_r (struct _reent *reent_ptr,
     }
   ENV_UNLOCK;
   return NULL;
-
+  
 #else
   const char *varbuf = NULL;
   size_t size = 64;
@@ -127,7 +127,7 @@ _findenv_r (struct _reent *reent_ptr,
 
   do {
     if (varbuf)
-      free(varbuf);
+      free((char*)varbuf);
     size <<= 1;
     if (varbuf = malloc(size))
       len = GetVar((STRPTR)name,varbuf,size,GVF_BINARY_VAR) + 1;
@@ -138,13 +138,13 @@ _findenv_r (struct _reent *reent_ptr,
 
   if (len == 0) {
     /* doesn't exist */
-    free(varbuf);
+    free((char*)varbuf);
     return NULL;
   }
 
   return (char *)varbuf;
 
-#endif
+#endif 
 }
 
 /*
