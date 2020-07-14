@@ -12,7 +12,8 @@
 #include <exec/types.h>
 #include <powerpc/powerpc.h>
 #include <proto/exec.h>
-#pragma pack(pop)
+#include <powerpc/tasksPPC.h>
+#include <exec/tasks.h>
 
 //****************************************************************************
 
@@ -24,19 +25,54 @@ struct DosLibrary* DOSBase;
 struct ExecBase* SysBase;
 struct Library* PowerPCBase;
 
-void  _exit(LONG rval);
-void __start (char* commandline, struct PPCBase* PowerPCBase, ULONG wbenchmsg, ULONG commandlen);
-void callfuncs(APTR list, ULONG flag);
-
-extern APTR __initlist, __exitlist, __ctrslist, __dtrslist;
-extern LONG main(LONG, char**);
-
 //****************************************************************************
 
 struct CallFunction {
 APTR cf_Function;
 LONG cf_Priority;
 };
+
+struct TaskObject {
+  struct Node n;                /* contains task name and priority */
+  UBYTE flags;
+  UBYTE id;                     /* used to check a TaskObject pointer */
+  ULONG reserved1[6];
+  struct Task *m68kParent;      /* parent 68k process, for sync. tasks */
+  APTR start_addr;              /* ptr to the task's first instruction */
+  ULONG stacksize;
+  ULONG args[8];                /* r3 - r10 */
+  struct Library *PPCBase;      /* our library base */
+  BPTR inputhandle;             /* the standard I/O handles */
+  BPTR outputhandle;
+  BPTR errorhandle;
+  BPTR progdirLock;             /* PROGDIR: lock from parent */
+  BPTR curdirLock;              /* current directory lock from parent */
+  ULONG reserved2;
+  void *msg_data;               /* only relevant, if we really have a */
+  ULONG msg_length;             /*  startup msg (PPCTASKTAG_STARTUP_MSG) */
+  ULONG msg_id;
+  char reserved3[32];
+/* PPC-only data below */
+  struct TaskPPC *this;
+  APTR initialstack;            /* ptr to task's initial V.4 stack frame */
+  APTR exit_addr;               /* function to call on PPCFinishTask() */
+  ULONG reserved4;
+  ULONG Ext_UserData;
+  char reserved5[32];
+};
+
+#define TskObj_idMagic 0xa5
+
+#pragma pack(pop)
+
+//****************************************************************************
+
+void  _exit(LONG rval);
+void __start (char* commandline, struct PPCBase* PowerPCBase, ULONG wbenchmsg, ULONG commandlen, struct TaskObject* taskobj);
+void callfuncs(APTR list, ULONG flag);
+
+extern APTR __initlist, __exitlist, __ctrslist, __dtrslist;
+extern LONG main(LONG, char**);
 
 //****************************************************************************
 
@@ -68,6 +104,7 @@ LONG cf_Priority;
 	"lis 11,__SaveLR@ha\n\t"
 	"mflr 0\n\t"
 	"stw 0,__SaveLR@l(11)\n\t"
+	"mr 7,2\n\t"
 	"b __start\n\t"
 	".string \"  Compiled using MOS2WOS - Startup version 1.0  \""
 	);
@@ -138,15 +175,50 @@ void callfuncs(APTR list, ULONG flag)
 
 //**************************************************************************** 
 
-void  __start (char* commandline, struct PPCBase* myPowerPCBase, ULONG wbenchmsg, ULONG commandlen)
+void  __start (char* commandline, struct PPCBase* myPowerPCBase, ULONG wbenchmsg, ULONG commandlen, struct TaskObject* taskobj)
 {
+	if ((taskobj) && (taskobj->id == TskObj_idMagic))
+	{
+		if (!(taskobj->args[0]))
+		{
+			wbenchmsg = taskobj->args[1];
+		}
+		else
+		{
+			wbenchmsg = 0;
+			while (commandline[0])
+			{
+				if ((commandline[0] == '"') && (commandline[1] == ' '))
+				{
+					commandline += 2;
+					break;
+				}
+				commandline++;
+			}
+
+			commandlen = 1;
+			
+			char* endline = commandline;
+			
+			while (endline[0])
+			{
+				commandlen++;
+				endline++;
+			}
+			endline[0] = '\n';
+			endline[1] = 0;  //buffer overflow?			
+		}
+		myPowerPCBase = (struct PPCBase*)taskobj->this->tp_PowerPCBase;
+	}
+
+	PowerPCBase = (struct Library*)myPowerPCBase;			
+	SysBase = (struct ExecBase*)myPowerPCBase->PPC_SysLib;
+	DOSBase = (struct DosLibrary*)myPowerPCBase->PPC_DosLib;
+
 	__commandlen = commandlen;
 	__commandline = (ULONG)commandline;
 	_WBenchMsg = wbenchmsg;
  
-	PowerPCBase = (struct Library*)myPowerPCBase;
-	SysBase = (struct ExecBase*)myPowerPCBase->PPC_SysLib;
-	DOSBase = (struct DosLibrary*)myPowerPCBase->PPC_DosLib;
 	callfuncs((APTR)&__initlist, -1);
 	
 	ULONG* funcpointer = (ULONG*)&__ctrslist;	
@@ -155,7 +227,8 @@ void  __start (char* commandline, struct PPCBase* myPowerPCBase, ULONG wbenchmsg
 		void (*ctorfunc)(void) = (APTR)funcpointer[0];
 		ctorfunc();
 		funcpointer++;
-	}		
+	}
+			
 	_exit(main(__argc, __argv));
 }
 
