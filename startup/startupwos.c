@@ -21,9 +21,9 @@ ULONG __SaveLR, __SaveSP, _WBenchMsg, __commandlen, __commandline;
 LONG __argc, __Saveerror;
 char **__argv;
 
-struct DosLibrary* DOSBase;
-struct ExecBase* SysBase;
-struct Library* PowerPCBase;
+struct DosLibrary* DOSBase = NULL;
+struct ExecBase* SysBase = NULL;
+struct Library* PowerPCBase = NULL;
 
 //****************************************************************************
 
@@ -106,7 +106,7 @@ extern LONG main(LONG, char**);
 	"stw 0,__SaveLR@l(11)\n\t"
 	"mr 7,2\n\t"
 	"b __start\n\t"
-	".string \"  Compiled using MOS2WOS - Startup version 1.0  \""
+	".string \"  Compiled using MOS2WOS - Startup version 1.1  \""
 	);
 
 //****************************************************************************
@@ -177,38 +177,42 @@ void callfuncs(APTR list, ULONG flag)
 
 void  __start (char* commandline, struct PPCBase* myPowerPCBase, ULONG wbenchmsg, ULONG commandlen, struct TaskObject* taskobj)
 {
-	if ((taskobj) && (taskobj->id == TskObj_idMagic))
-	{
-		if (!(taskobj->args[0]))
-		{
-			wbenchmsg = taskobj->args[1];
-		}
-		else
-		{
-			wbenchmsg = 0;
-			while (commandline[0])
-			{
-				if ((commandline[0] == '"') && (commandline[1] == ' '))
-				{
-					commandline += 2;
-					break;
-				}
-				commandline++;
-			}
+	
+	if (myPowerPCBase->PPC_LibNode.lib_Version != 18)
+	{ 
+	        if ((taskobj) && (taskobj->id == TskObj_idMagic))
+	        {
+		        if (!(taskobj->args[0]))
+		        {
+			        wbenchmsg = taskobj->args[1];
+		        }
+		        else
+		        {
+			        wbenchmsg = 0;
+			        while (commandline[0])
+			        {
+				        if ((commandline[0] == '"') && (commandline[1] == ' '))
+				        {
+					        commandline += 2;
+					        break;
+				        }
+				        commandline++;
+			        }
 
-			commandlen = 1;
+			        commandlen = 1;
 			
-			char* endline = commandline;
+			        char* endline = commandline;
 			
-			while (endline[0])
-			{
-				commandlen++;
-				endline++;
-			}
-			endline[0] = '\n';
-			endline[1] = 0;  //buffer overflow?			
-		}
-		myPowerPCBase = (struct PPCBase*)taskobj->this->tp_PowerPCBase;
+			        while (endline[0])
+			        {
+				        commandlen++;
+				        endline++;
+			        }
+			        endline[0] = '\n';
+			        endline[1] = 0;  //buffer overflow?			
+		        }
+		        myPowerPCBase = (struct PPCBase*)taskobj->this->tp_PowerPCBase;
+	        }
 	}
 
 	PowerPCBase = (struct Library*)myPowerPCBase;			
