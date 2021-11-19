@@ -12,6 +12,8 @@
 #include <powerpc/powerpc_protos.h>
 #pragma pack(pop)
 
+#define MAGIC_COOKIE 0x07041776
+
 static void *__mempool;
 
 void *memamiga(size_t align, size_t nbytes)
@@ -24,14 +26,17 @@ void *memamiga(size_t align, size_t nbytes)
     align = 32;
   if ((align & -align) != align)
     return NULL;
-  size = nbytes + align + 8;
+  size = nbytes + align + 32;
   a = AllocPooledPPC(__mempool, size);
   if (!a)
     return a;
-  ptr = (void*)((ULONG)a + align+7 & -align);
+  ptr = (void*)((ULONG)a + align+31 & -align);
+
   char *b = ptr;
   int *memloc = (int*)(&b[-4]);
   int *memsize = (int*)(&b[-8]);
+  int *cookie = (int*)(&b[-12]);
+  *cookie = (ULONG)MAGIC_COOKIE;
   *memloc = (ULONG)a;
   *memsize = (ULONG)size;			//Original WOS saves size. MOS emulation of
   return ptr;					//WOS apparently does not...
@@ -40,11 +45,14 @@ void *memamiga(size_t align, size_t nbytes)
 
 void free(void *ptr)
 {
-  if (ptr != NULL)
+  if ((ptr != NULL))
   {
     void* a;
     char *b = ptr;
     ULONG c;
+    int *cookie = (int*)(&b[-12]);
+    if (*cookie != MAGIC_COOKIE)
+    	asm(".long 0\n"); //Memory corruption
     int *memloc = (int*)(&b[-4]);
     int *memsize = (int*)(&b[-8]);
     a = (void*)*memloc;
